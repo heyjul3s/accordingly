@@ -1,0 +1,41 @@
+//UTIL
+visible()
+    opacity 1
+    visibility visible
+
+//hide but in flow
+obscure()
+    opacity 0
+    visibility hidden
+
+reveal()
+    display block
+    opacity 1
+    visibility visible
+    
+//hide and remove from flow
+hide()
+    display none
+    opacity 0
+    visibility hidden
+
+
+//TYPE
+font-init($family, $type, $size = 16px/1.5em, $weight = 300, $style = normal, $variant = normal)
+    font $style $variant $weight $size, $family, $type
+
+
+//ELEM
+pseudo($content = '', $display = block)
+    content $content
+    display $display
+
+
+dimensions($width = 100%, $height = 100%, $bgColour = transparent)
+    width $width
+    height $height
+    background-color $bgColour
+
+
+rounded()
+    border-radius 50%

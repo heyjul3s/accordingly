@@ -1,0 +1,46 @@
+@import 'base/all.styl'
+
+.accordion
+    display block
+    position relative
+    center(800px)
+
+    .accordion-header
+        display block
+        padding 5px 0
+
+        a
+            display block
+            color blue
+            padding 20px 0
+            font-size 28px
+            border-bottom 1px solid grey
+
+        .icon
+            display inline-block
+            vertical-align middle
+
+        .icon
+            rounded()
+            margin-right 10px
+            width 28px
+            height 28px
+            box-shadow 0 0 0 2px blue
+
+            &::before,
+            &::after
+                content ''
+                display block
+
+
+
+
+    .accordion-body
+        display block
+
+        .accordion-panel-content
+            display block
+
+
+.panel-is-open .accordion-body
+    display block !important
