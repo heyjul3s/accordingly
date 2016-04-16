@@ -1,8 +1,6 @@
-// put these somewhere, lol
-// isObject  : ( obj ) => ( obj === Object(obj) && !Array.isArray(obj) ),
-// isExists  : ( el )  => ( el && ( typeof el !== 'undefined') ),
-// isString  : ( val ) => ( Object.prototype.toString.call(val) === '[object String]' );
-// isNumber  : ( val ) => ( !isNaN(parseFloat(data)) && isFinite(data) ),
+// TODO: css styles
+// TODO: wait until max-height transition done and apply opacity
+// TODO: only one panel open at a time
 
 (function(){
     'use strict';
@@ -30,7 +28,11 @@
             accordion.addEventListener('click', function(ev){
                 ev.preventDefault();
 
-                findPanelHeight( ev, getThisPanelClassList(ev), panelHeights);
+                isPanelOpen(
+                    ev.target.parentNode.nextElementSibling,
+                    'panel-is-open',
+                    findPanelHeight(ev, getThisPanelClassList(ev), panelHeights)
+                );
             });
         }
 
@@ -54,29 +56,22 @@
          * @return {[number]}                : returns a numerical height value
          */
         function findPanelHeight(ev, panelClasses, heights) {
-            let panelClassesArray = [].slice.call(panelClasses);
+            //new feature in es2015 that makes this redundant?
+            let panelClassesArray = [].slice.call(panelClasses),
+                panelHeight;
 
             Object.keys(heights).forEach(function(key) {
 
                 panelClassesArray.some(function(el, i){
                     if ( panelClassesArray.includes(key) ) {
-                        return heights[key];
+                        // return heights[key];
+                        panelHeight = heights[key];
                     }
                 });
 
             });
-        }
 
-
-        /**
-         * application of panel height value and animate
-         * @return {[type]} [description]
-         */
-        function applyPanelHeight(height) {
-            //boolean and class check as condition of height/anim applications
-            if ( !isNaN(parseFloat(height)) && isFinite(height) ) {
-
-            }
+            return panelHeight;
         }
 
 
@@ -86,14 +81,18 @@
 
             for (var item in accordionPanels) {
                 if ( accordionPanels.hasOwnProperty(item) ) {
-                    accordionPanels[item].style.cssText = 'height: 0; display: none;';
+                    accordionPanels[item].style.cssText = 'max-height: 0; height: 0; position:absolute; opacity: 0;';
                 }
             }
         }
 
 
-        function swapClass(el) {
-            return el.classList.contains('panel-is-open') ? el.classList.remove('panel-is-open') : el.classList.add('panel-is-open');
+        function swapClass(el, classname) {
+            if (Object.prototype.toString.call(classname) === '[object String]') {
+                return el.classList.contains(classname) ? el.classList.remove(classname) : el.classList.add(classname);
+            } else {
+                return false;
+            }
         }
 
 
@@ -102,8 +101,37 @@
          * @param {[type]} el     [description]
          * @param {[type]} height [description]
          */
-        function setHeight(el, height) {
-            el.style.cssText = 'height:' + height + 'px;';
+        function setHeight(el, height, classname) {
+            if ( (!isNaN(parseFloat(height)) && isFinite(height)) && (Object.prototype.toString.call(classname) === '[object String]') ) {
+                el.classList.add(classname);
+                el.style.cssText = 'height:' + height + 'px;' + 'max-height:' + height + 'px;' + 'position: relative';
+            }
+        }
+
+
+        /**
+         * reset height to 0 and hide
+         * @param {[type]} el [description]
+         */
+        function resetHeight(el, classname) {
+            if (Object.prototype.toString.call(classname) === '[object String]') {
+                el.classList.remove(classname);
+                el.style.cssText = 'height: 0; max-height: 0; display: none; position: absolute;';
+            }
+        }
+
+
+        function isPanelOpen(el, classname, height) {
+            if ( isOpen && !el.classList.contains(classname) ) {
+                setHeight(el, height, classname);
+            } else {
+                resetHeight(el, classname);
+            }
+            isOpen = !isOpen;
+        }
+
+
+        function panelVisibilityHandler(el, classname, height) {
         }
 
 

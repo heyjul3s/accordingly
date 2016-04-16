@@ -33,14 +33,10 @@
                 display block
 
 
-
-
-    .accordion-body
+    .accordion-panel-content
         display block
+        background red
+        transition max-height 400ms ease-out, opacity 400ms ease-out, visibility 400ms ease-out
 
-        .accordion-panel-content
-            display block
-
-
-.panel-is-open .accordion-body
-    display block !important
+        .panel-is-open
+            opacity: 1;
