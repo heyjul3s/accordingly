@@ -35,8 +35,19 @@
 
     .accordion-panel-content
         display block
-        background red
-        transition max-height 400ms ease-out, opacity 400ms ease-out, visibility 400ms ease-out
+        width 100%
+        height auto
+        padding 10px 0
+        transition padding 300ms ease-out, height 300ms ease-out, max-height 400ms ease-out, opacity 400ms ease-out, visibility 400ms ease-out
 
-        .panel-is-open
-            opacity: 1;
+        &.hidden
+            overflow hidden
+            padding-top 0
+            padding-bottom 0
+            height 0
+            border-width 0
+            opacity 0
+            visibility hidden
+
+        &.panel-is-open
+            opacity 1

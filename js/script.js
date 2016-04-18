@@ -1,5 +1,3 @@
-// TODO: css styles
-// TODO: wait until max-height transition done and apply opacity
 // TODO: only one panel open at a time
 
 (function(){
@@ -39,8 +37,8 @@
 
         /**
          * get target panel classList
-         * @param  {I don't know what this is}  ev : the event thing, okay? I don't know, stop asking
-         * @return {Boolean}                       : an array of classes belonging to panel
+         * @param  {[type]]} ev
+         * @return {Boolean} : an array of classes belonging to panel
          */
         function getThisPanelClassList(ev) {
             let target = ev.target,
@@ -64,7 +62,6 @@
 
                 panelClassesArray.some(function(el, i){
                     if ( panelClassesArray.includes(key) ) {
-                        // return heights[key];
                         panelHeight = heights[key];
                     }
                 });
@@ -81,7 +78,7 @@
 
             for (var item in accordionPanels) {
                 if ( accordionPanels.hasOwnProperty(item) ) {
-                    accordionPanels[item].style.cssText = 'max-height: 0; height: 0; position:absolute; opacity: 0;';
+                    accordionPanels[item].classList.add('hidden');
                 }
             }
         }
@@ -98,13 +95,13 @@
 
         /**
          * well, set the element height
-         * @param {[type]} el     [description]
-         * @param {[type]} height [description]
+         * @param {[type]} el     : selector
+         * @param {number} height : height of panel
          */
         function setHeight(el, height, classname) {
             if ( (!isNaN(parseFloat(height)) && isFinite(height)) && (Object.prototype.toString.call(classname) === '[object String]') ) {
                 el.classList.add(classname);
-                el.style.cssText = 'height:' + height + 'px;' + 'max-height:' + height + 'px;' + 'position: relative';
+                el.style.cssText = 'height:' + height + 'px;' + 'position: relative; opacity: 1; visibility: visible';
             }
         }
 
@@ -116,11 +113,18 @@
         function resetHeight(el, classname) {
             if (Object.prototype.toString.call(classname) === '[object String]') {
                 el.classList.remove(classname);
-                el.style.cssText = 'height: 0; max-height: 0; display: none; position: absolute;';
+                el.style.cssText = 'height: 0; position: absolute; opacity: 0; visibility: hidden';
             }
         }
 
 
+        /**
+         * application of relevant classes for transitions
+         * @param  {[type]}  el        [description]
+         * @param  {[type]}  classname [description]
+         * @param  {[type]}  height    [description]
+         * @return {Boolean}           [description]
+         */
         function isPanelOpen(el, classname, height) {
             if ( isOpen && !el.classList.contains(classname) ) {
                 setHeight(el, height, classname);
@@ -128,10 +132,6 @@
                 resetHeight(el, classname);
             }
             isOpen = !isOpen;
-        }
-
-
-        function panelVisibilityHandler(el, classname, height) {
         }
 
 
@@ -150,10 +150,11 @@
                 }
             });
 
+            //TODO: use arrows
             promise.then(function(){
                 hidePanels();
     		}).catch(function(){
-                console.log('did not work'); //TODO: anything to do if failure?
+                console.log('did not work');
     		});
 
         }
@@ -172,14 +173,15 @@
                 Object.keys(el).forEach(function (key) {
 
                     if ( elemIsVisible(el[key]) ) {
-                        let stuff   = el[key],
-                            objKey  = stuff.classList[1], //TODO : this is weak
-                            value   = stuff.clientHeight; //TODO : just the element or plus padding/margin?
+
+                        console.log(el[key]);
+                        let panel   = el[key],
+                            objKey  = panel.classList[1], //TODO : this is weak
+                            value   = panel.clientHeight; //TODO : just the element or plus padding/margin?
 
                         height[objKey] = value;
                     }
                     // else {
-                        // what to do, what to do?
                     // }
 
                 });
