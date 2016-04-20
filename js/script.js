@@ -1,4 +1,4 @@
-// TODO: only one panel open at a time
+// TODO: only one panel open at a time, collapse all before opening
 
 (function(){
     'use strict';
@@ -58,6 +58,7 @@
             let panelClassesArray = [].slice.call(panelClasses),
                 panelHeight;
 
+            //TODO: switch to for of
             Object.keys(heights).forEach(function(key) {
 
                 panelClassesArray.some(function(el, i){
@@ -76,6 +77,7 @@
         function hidePanels() {
             let accordionPanels = document.querySelectorAll('.accordion-panel-content');
 
+            //TODO: switch to newer loop
             for (var item in accordionPanels) {
                 if ( accordionPanels.hasOwnProperty(item) ) {
                     accordionPanels[item].classList.add('hidden');
@@ -87,8 +89,6 @@
         function swapClass(el, classname) {
             if (Object.prototype.toString.call(classname) === '[object String]') {
                 return el.classList.contains(classname) ? el.classList.remove(classname) : el.classList.add(classname);
-            } else {
-                return false;
             }
         }
 
@@ -100,8 +100,9 @@
          */
         function setHeight(el, height, classname) {
             if ( (!isNaN(parseFloat(height)) && isFinite(height)) && (Object.prototype.toString.call(classname) === '[object String]') ) {
-                el.classList.add(classname);
-                el.style.cssText = 'height:' + height + 'px;' + 'position: relative; opacity: 1; visibility: visible';
+                swapClass(el, classname);
+                swapClass(el, 'hidden');
+                el.style.cssText = 'max-height:' + height + 'px; height:' +  height + 'px';
             }
         }
 
@@ -113,7 +114,8 @@
         function resetHeight(el, classname) {
             if (Object.prototype.toString.call(classname) === '[object String]') {
                 el.classList.remove(classname);
-                el.style.cssText = 'height: 0; position: absolute; opacity: 0; visibility: hidden';
+                el.classList.add('hidden');
+                el.style.cssText = 'max-height: 0; height: 0;';
             }
         }
 
@@ -126,11 +128,7 @@
          * @return {Boolean}           [description]
          */
         function isPanelOpen(el, classname, height) {
-            if ( isOpen && !el.classList.contains(classname) ) {
-                setHeight(el, height, classname);
-            } else {
-                resetHeight(el, classname);
-            }
+            ( isOpen && !el.classList.contains(classname) )  ?  setHeight(el, height, classname) : resetHeight(el, classname);
             isOpen = !isOpen;
         }
 
@@ -174,7 +172,7 @@
 
                     if ( elemIsVisible(el[key]) ) {
 
-                        console.log(el[key]);
+                        //TODO: destructure
                         let panel   = el[key],
                             objKey  = panel.classList[1], //TODO : this is weak
                             value   = panel.clientHeight; //TODO : just the element or plus padding/margin?

@@ -35,15 +35,15 @@
 
     .accordion-panel-content
         display block
+        position relative
         width 100%
         height auto
-        padding 10px 0
-        transition padding 300ms ease-out, height 300ms ease-out, max-height 400ms ease-out, opacity 400ms ease-out, visibility 400ms ease-out
+        transition padding 300ms ease-out, height 300ms ease-out, max-height 300ms ease-out, opacity 100ms ease-out, visibility 100ms ease-out
 
         &.hidden
-            overflow hidden
             padding-top 0
             padding-bottom 0
+            max-height 0
             height 0
             border-width 0
             opacity 0
@@ -51,3 +51,4 @@
 
         &.panel-is-open
             opacity 1
+            visibility visible
