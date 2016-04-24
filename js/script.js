@@ -14,8 +14,7 @@
         let accordion       = document.querySelector('.accordion-container'),
             panelHeader     = document.querySelector('.accordion-header'),
             panels          = document.querySelector('.accordion-panel-content'),
-            height          = {},
-            isOpen          = false;
+            height          = {};
 
 
         function init() {
@@ -31,6 +30,13 @@
                     'panel-is-open',
                     findPanelHeight(ev, getThisPanelClassList(ev), panelHeights)
                 );
+
+                if ( ev.target.parentNode.nextElementSibling.classList.contains('panel-is-open') ) {
+                    ev.target.classList.add('panel-is-open');
+                } else {
+                    ev.target.classList.remove('panel-is-open');
+                }
+
             });
         }
 
@@ -100,8 +106,8 @@
          */
         function setHeight(el, height, classname) {
             if ( (!isNaN(parseFloat(height)) && isFinite(height)) && (Object.prototype.toString.call(classname) === '[object String]') ) {
-                swapClass(el, classname);
-                swapClass(el, 'hidden');
+                el.classList.remove('hidden');
+                el.classList.add(classname);
                 el.style.cssText = 'max-height:' + height + 'px; height:' +  height + 'px';
             }
         }
@@ -113,8 +119,8 @@
          */
         function resetHeight(el, classname) {
             if (Object.prototype.toString.call(classname) === '[object String]') {
-                el.classList.remove(classname);
                 el.classList.add('hidden');
+                el.classList.remove(classname);
                 el.style.cssText = 'max-height: 0; height: 0;';
             }
         }
@@ -128,8 +134,7 @@
          * @return {Boolean}           [description]
          */
         function isPanelOpen(el, classname, height) {
-            ( isOpen && !el.classList.contains(classname) )  ?  setHeight(el, height, classname) : resetHeight(el, classname);
-            isOpen = !isOpen;
+            (!el.classList.contains(classname) )  ?  setHeight(el, height, classname) : resetHeight(el, classname);
         }
 
 
@@ -174,8 +179,10 @@
 
                         //TODO: destructure
                         let panel   = el[key],
+                            panelBoundingRect = panel.getBoundingClientRect(),
                             objKey  = panel.classList[1], //TODO : this is weak
-                            value   = panel.clientHeight; //TODO : just the element or plus padding/margin?
+                            value   = panelBoundingRect.height;
+                            // value   = panel.clientHeight; //TODO : just the element or plus padding/margin?
 
                         height[objKey] = value;
                     }

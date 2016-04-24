@@ -1,36 +1,68 @@
 @import 'base/all.styl'
 
+.accordion-container
+    center(800px)
+
 .accordion
     display block
     position relative
-    center(800px)
 
     .accordion-header
         display block
-        padding 5px 0
+        padding 0
 
         a
             display block
-            color blue
-            padding 20px 0
-            font-size 28px
-            border-bottom 1px solid grey
+            position relative
+            color white
+            padding 20px
+            font-size 14px
+            font-weight 900
+            background-color #38cc70
+            text-align center
+
+            transition background 400ms ease-out
+
+            &:hover
+                background-color #2ba659
+
+            &.panel-is-open
+                > .icon
+                    &::before
+                        transform rotate(180deg)
+
+                    &::after
+                        transform rotate(-180deg)
 
         .icon
             display inline-block
+            position absolute
+            top calc(50% - 14px)
+            left 20px
             vertical-align middle
-
-        .icon
             rounded()
-            margin-right 10px
             width 28px
             height 28px
-            box-shadow 0 0 0 2px blue
+            box-shadow 0 0 0 1px rgba(255, 255, 255, .2)
 
             &::before,
             &::after
                 content ''
                 display block
+                position absolute
+                top: 50%;
+                left: calc(50% - 7px);
+                width 14px
+                height 1px
+                background-color white
+                transition transform 400ms ease-out
+
+            &::before
+                transform rotate(0deg)
+
+            &::after
+                transform rotate(90deg)
+
 
 
     .accordion-panel-content
@@ -38,7 +70,7 @@
         position relative
         width 100%
         height auto
-        transition padding 300ms ease-out, height 300ms ease-out, max-height 300ms ease-out, opacity 100ms ease-out, visibility 100ms ease-out
+        transition padding 400ms ease-out, height 400ms ease-out, max-height 400ms ease-out, opacity 300ms ease-out, visibility 300ms ease-out
 
         &.hidden
             padding-top 0
@@ -49,6 +81,18 @@
             opacity 0
             visibility hidden
 
+            .content-container
+                opacity 0
+                transform scale(.5) translateY(-25%)
+
         &.panel-is-open
             opacity 1
             visibility visible
+
+            .content-container
+                opacity 1
+                transform scale(1) translateY(0)
+
+        .content-container
+            padding 10px 50px
+            transition transform 500ms ease-out, opacity 400ms ease-out
