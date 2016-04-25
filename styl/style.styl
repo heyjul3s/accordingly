@@ -2,10 +2,12 @@
 
 .accordion-container
     center(800px)
+    border thin solid #248a4b
 
 .accordion
     display block
     position relative
+    border thin solid #248a4b
 
     .accordion-header
         display block
@@ -20,19 +22,48 @@
             font-weight 900
             background-color #38cc70
             text-align center
-
             transition background 400ms ease-out
 
+            &::after
+                pseudo()
+                absolute bottom left
+                max-width 0
+                width 0
+                height 3px
+                background #248a4b
+                transition width 400ms ease-out, max-width 400ms ease-out
+
             &:hover
-                background-color #2ba659
+                background-color rgba(43, 166, 89, .55)
+
+                > .icon
+                    box-shadow 0 0 0 1px rgba(255, 255, 255, .75)
+
+                    &::before
+                        opacity .75
+
+                    &::after
+                        opacity .75
 
             &.panel-is-open
+                background-color rgba(43, 166, 89, 1)
+
+                &::after
+                    width 100%
+                    max-width 100%
+
                 > .icon
+                    background-color #248a4b
+                    box-shadow 0 0 0 2px #248a4b
+                    //box-shadow 0 0 0 1px rgba(255, 255, 255, 1)
+
                     &::before
                         transform rotate(180deg)
+                        opacity 1
 
                     &::after
                         transform rotate(-180deg)
+                        opacity 1
 
         .icon
             display inline-block
@@ -43,19 +74,21 @@
             rounded()
             width 28px
             height 28px
-            box-shadow 0 0 0 1px rgba(255, 255, 255, .2)
+            box-shadow 0 0 0 1px rgba(255, 255, 255, .4)
+            background-color transparent
+            transition box-shadow 400ms ease-out, background-color 400ms ease-out
 
             &::before,
             &::after
-                content ''
-                display block
+                pseudo()
                 position absolute
                 top: 50%;
                 left: calc(50% - 7px);
                 width 14px
                 height 1px
                 background-color white
-                transition transform 400ms ease-out
+                opacity .4
+                transition transform 400ms ease-out, opacity 400ms ease-out
 
             &::before
                 transform rotate(0deg)
