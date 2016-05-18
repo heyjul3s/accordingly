@@ -13,12 +13,11 @@
 
         let accordion       = document.querySelector('.accordion-container'),
             panelHeader     = document.querySelector('.accordion-header'),
-            panels          = document.querySelector('.accordion-panel-content'),
+            panels          = document.querySelectorAll('.accordion-panel-content'),
             height          = {};
 
-
         function init() {
-            var panelHeights = getHeight(document.querySelectorAll('.accordion-panel-content'));
+            let panelHeights = getHeight( panels );
 
             initialPanelHandler( panelHeights );
 
@@ -47,7 +46,7 @@
          * @return {Boolean} : an array of classes belonging to panel
          */
         function getThisPanelClassList(ev) {
-            let target = ev.target,
+            let target        = ev.target,
                 targetedPanel = target.parentNode.nextElementSibling;
 
             return targetedPanel.classList;
@@ -60,11 +59,9 @@
          * @return {[number]}                : returns a numerical height value
          */
         function findPanelHeight(ev, panelClasses, heights) {
-            //new feature in es2015 that makes this redundant?
-            let panelClassesArray = [].slice.call(panelClasses),
+            let panelClassesArray = Array.from(panelClasses),
                 panelHeight;
 
-            //TODO: switch to for of
             Object.keys(heights).forEach(function(key) {
 
                 panelClassesArray.some(function(el, i){
@@ -81,13 +78,10 @@
 
         //make it usable for setting single panels as well, pass an object of css key values?
         function hidePanels() {
-            let accordionPanels = document.querySelectorAll('.accordion-panel-content');
+            let accordionPanels = Array.from(panels);
 
-            //TODO: switch to newer loop
-            for (var item in accordionPanels) {
-                if ( accordionPanels.hasOwnProperty(item) ) {
-                    accordionPanels[item].classList.add('hidden');
-                }
+            for ( let item of accordionPanels ) {
+                item.classList.add('hidden');
             }
         }
 
@@ -134,7 +128,7 @@
          * @return {Boolean}           [description]
          */
         function isPanelOpen(el, classname, height) {
-            (!el.classList.contains(classname) )  ?  setHeight(el, height, classname) : resetHeight(el, classname);
+            ( !el.classList.contains(classname) )  ?  setHeight(el, height, classname) : resetHeight(el, classname);
         }
 
 
@@ -145,7 +139,7 @@
          */
         function initialPanelHandler(heights) {
 
-            var promise = new Promise(function(resolve, reject){
+            let promise = new Promise(function(resolve, reject){
                 if ( (heights === Object(heights)) && (!Array.isArray(heights)) && Object.keys(heights).length !== 0 ) {
                     resolve(heights);
                 } else {
@@ -157,7 +151,7 @@
             promise.then(function(){
                 hidePanels();
     		}).catch(function(){
-                console.log('did not work');
+                console.log('oopsies!');
     		});
 
         }
@@ -177,23 +171,17 @@
 
                     if ( elemIsVisible(el[key]) ) {
 
-                        //TODO: destructure
-                        let panel   = el[key],
+                        let panel             = el[key],
                             panelBoundingRect = panel.getBoundingClientRect(),
-                            objKey  = panel.classList[1], //TODO : this is weak
-                            value   = panelBoundingRect.height;
-                            // value   = panel.clientHeight; //TODO : just the element or plus padding/margin?
+                            objKey            = Array.from(panel.classList).slice(-1)[0],
+                            value             = panelBoundingRect.height;
 
                         height[objKey] = value;
                     }
-                    // else {
-                    // }
 
                 });
 
             }
-            // else if ( single dom element ) {
-            // }
 
             return height;
         }
