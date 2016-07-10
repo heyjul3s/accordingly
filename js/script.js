@@ -4,7 +4,7 @@
     'use strict';
 
     document.addEventListener('DOMContentLoaded', function(){
-        var pique = Pique();
+        let pique = Pique();
         pique.init();
     });
 
@@ -19,24 +19,89 @@
         function init() {
             let panelHeights = getHeight( panels );
 
-            initialPanelHandler( panelHeights );
-
             accordion.addEventListener('click', function(ev){
                 ev.preventDefault();
 
-                isPanelOpen(
-                    ev.target.parentNode.nextElementSibling,
-                    'panel-is-open',
-                    findPanelHeight(ev, getThisPanelClassList(ev), panelHeights)
-                );
+                let target = ev.target,
+                    targetAccordion = target.parentNode.parentNode,
+                    targetAccordionContent = targetAccordion.querySelector('.accordion-panel-content');
 
-                if ( ev.target.parentNode.nextElementSibling.classList.contains('panel-is-open') ) {
-                    ev.target.classList.add('panel-is-open');
-                } else {
-                    ev.target.classList.remove('panel-is-open');
-                }
-
+                //TODO: curry
+                openTargetPanel( targetAccordion, findPanelHeight(getThisPanelClassList(ev), panelHeights), targetAccordionContent, 'panel-is-open' );
             });
+        }
+
+
+        /**
+         * application of relevant classes for transitions
+         * @param  {[type]}  el        [description]
+         * @param  {[type]}  classname [description]
+         * @param  {[type]}  height    [description]
+         * @return {Boolean}           [description]
+         */
+        function openTargetPanel(target, height, targetContent, classname) {
+            if ( !target.classList.contains(classname) ) {
+                setHeight(targetContent, height);
+                setTargetAccordionClass(target, classname);
+            } else {
+                resetHeight(targetContent);
+                removeTargetAccordionClass(target, classname);
+            }
+        }
+
+
+        function setTargetAccordionClass(el, classname) {
+            if ( (Object.prototype.toString.call( classname.trim() ) === '[object String]') && !el.classList.contains(classname)  ) {
+                el.classList.add(classname);
+            }
+        }
+
+
+        function removeTargetAccordionClass(el, classname) {
+            if ( (Object.prototype.toString.call( classname.trim() ) === '[object String]') && el.classList.contains(classname) ) {
+                el.classList.remove(classname);
+            }
+        }
+
+
+        function setHeight(el, height) {
+            if ( !isNaN(parseFloat(height)) && isFinite(height) ) {
+                el.style.cssText = 'max-height:' + height + 'px; height:' +  height + 'px';
+            }
+        }
+
+
+        function resetHeight(el, classname) {
+            el.style.cssText = 'max-height: 0; height: 0;';
+        }
+
+
+        //TODO: to reset all panels. to be used in lieu with openTargetPanel to ensure only one panel is open at a time
+        function resetAll() {
+
+        }
+
+
+        /**
+         * find matching class and return relevant height value
+         * @param  {[array]} panelClasses  : classlist acquired from target panel
+         * @param  {[object]} heights      : object with name of panel and measured height
+         * @return {[number]}              : number value of target panel content height
+         */
+        function findPanelHeight(panelClasses, heights) {
+            let panelClassesArray = Array.from(panelClasses),
+                panelHeight;
+
+            Object.keys(heights).forEach(function(key) {
+
+                panelClassesArray.some(function(el, i){
+                    if ( panelClassesArray.includes(key) ) {
+                        panelHeight = heights[key];
+                    }
+                });
+            });
+
+            return panelHeight;
         }
 
 
@@ -53,110 +118,6 @@
         }
 
 
-        /**
-         * find matching class and return relevant height value
-         * @param  {[nodeList]} panelClasses : a list of classes
-         * @return {[number]}                : returns a numerical height value
-         */
-        function findPanelHeight(ev, panelClasses, heights) {
-            let panelClassesArray = Array.from(panelClasses),
-                panelHeight;
-
-            Object.keys(heights).forEach(function(key) {
-
-                panelClassesArray.some(function(el, i){
-                    if ( panelClassesArray.includes(key) ) {
-                        panelHeight = heights[key];
-                    }
-                });
-
-            });
-
-            return panelHeight;
-        }
-
-
-        //make it usable for setting single panels as well, pass an object of css key values?
-        function hidePanels() {
-            let accordionPanels = Array.from(panels);
-
-            for ( let item of accordionPanels ) {
-                item.classList.add('hidden');
-            }
-        }
-
-
-        function swapClass(el, classname) {
-            if (Object.prototype.toString.call(classname) === '[object String]') {
-                return el.classList.contains(classname) ? el.classList.remove(classname) : el.classList.add(classname);
-            }
-        }
-
-
-        /**
-         * well, set the element height
-         * @param {[type]} el     : selector
-         * @param {number} height : height of panel
-         */
-        function setHeight(el, height, classname) {
-            if ( (!isNaN(parseFloat(height)) && isFinite(height)) && (Object.prototype.toString.call(classname) === '[object String]') ) {
-                el.classList.remove('hidden');
-                el.classList.add(classname);
-                el.style.cssText = 'max-height:' + height + 'px; height:' +  height + 'px';
-            }
-        }
-
-
-        /**
-         * reset height to 0 and hide
-         * @param {[type]} el [description]
-         */
-        function resetHeight(el, classname) {
-            if (Object.prototype.toString.call(classname) === '[object String]') {
-                el.classList.add('hidden');
-                el.classList.remove(classname);
-                el.style.cssText = 'max-height: 0; height: 0;';
-            }
-        }
-
-
-        /**
-         * application of relevant classes for transitions
-         * @param  {[type]}  el        [description]
-         * @param  {[type]}  classname [description]
-         * @param  {[type]}  height    [description]
-         * @return {Boolean}           [description]
-         */
-        function isPanelOpen(el, classname, height) {
-            ( !el.classList.contains(classname) )  ?  setHeight(el, height, classname) : resetHeight(el, classname);
-        }
-
-
-        /** initialPanelHandler
-         *  Promise handler that triggers hidePanels function
-         *  @param  {[object]} heights  : argument of array type with object heights information
-         *  @return {[type]}           : broken dreams
-         */
-        function initialPanelHandler(heights) {
-
-            let promise = new Promise(function(resolve, reject){
-                if ( (heights === Object(heights)) && (!Array.isArray(heights)) && Object.keys(heights).length !== 0 ) {
-                    resolve(heights);
-                } else {
-                    reject(heights);
-                }
-            });
-
-            //TODO: use arrows
-            promise.then(function(){
-                hidePanels();
-    		}).catch(function(){
-                console.log('oopsies!');
-    		});
-
-        }
-
-
         /** getHeight
          *  Get heights of all panels and store in heightsList config array
          *  @param  {[object]} el        : panel elements
@@ -168,9 +129,7 @@
             if ( (el === Object(el)) && (!Array.isArray(el)) ) {
 
                 Object.keys(el).forEach(function (key) {
-
                     if ( elemIsVisible(el[key]) ) {
-
                         let panel             = el[key],
                             panelBoundingRect = panel.getBoundingClientRect(),
                             objKey            = Array.from(panel.classList).slice(-1)[0],
@@ -178,16 +137,18 @@
 
                         height[objKey] = value;
                     }
-
                 });
-
             }
 
             return height;
         }
 
 
-        //borrowed from jQuery
+        /**
+         * determine if node element is visible
+         * @param  {[node element]} el      : element node
+         * @return {[boolean]}      boolean : boolean value
+         */
         function elemIsVisible(el) {
             return !!( el.offsetWidth || el.offsetHeight || el.getClientRects().length );
         }

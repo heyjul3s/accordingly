@@ -2,12 +2,20 @@
 
 .accordion-container
     center(800px)
-    border thin solid #248a4b
+    // border thin solid #248a4b
+    &.accordion-open
+        .accordion
+            opacity 0.5
 
 .accordion
     display block
     position relative
-    border thin solid #248a4b
+    transition opacity 400ms ease-out, transform 400ms ease-out
+    opacity 1
+
+    &:hover
+        .accordion-header
+            box-shadow 1px 2px 6px 0px rgba(0,0,0, .15)
 
     .accordion-header
         display block
@@ -23,6 +31,9 @@
             background-color #38cc70
             text-align center
             transition background 400ms ease-out
+            box-shadow 1px 2px 6px 0px rgba(0,0,0, .15)
+            transition box-shadow 400ms ease-out, transform 400ms ease-out
+            transform scale(1)
 
             &::after
                 pseudo()
@@ -47,6 +58,7 @@
 
             &.panel-is-open
                 background-color rgba(43, 166, 89, 1)
+                transform scale(1.025)
 
                 &::after
                     width 100%
@@ -100,10 +112,11 @@
 
     .accordion-panel-content
         display block
-        position relative
+        position absolute
         width 100%
         height auto
         transition padding 400ms ease-out, height 400ms ease-out, max-height 400ms ease-out, opacity 300ms ease-out, visibility 300ms ease-out
+        opacity 0
 
         &.hidden
             padding-top 0
@@ -119,6 +132,8 @@
                 transform scale(.5) translateY(-25%)
 
         &.panel-is-open
+            transition-delay 400ms
+            position relative
             opacity 1
             visibility visible
 
