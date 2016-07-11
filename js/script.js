@@ -1,4 +1,5 @@
 // TODO: only one panel open at a time, collapse all before opening
+// TODO: fix target bug
 
 (function(){
     'use strict';
@@ -16,6 +17,15 @@
             panels          = document.querySelectorAll('.accordion-panel-content'),
             height          = {};
 
+            //transitionend prefix
+        let transitionEndPrefixes = {
+            'WebkitTransition' : 'webkitTransitionEnd',
+               'MozTransition' : 'transitionend',
+                'msTransition' : 'MSTransitionEnd',
+                 'OTransition' : 'oTransitionEnd',
+                  'transition' : 'transitionend'
+        };
+
         function init() {
             let panelHeights = getHeight( panels );
 
@@ -28,7 +38,17 @@
 
                 //TODO: curry
                 openTargetPanel( targetAccordion, findPanelHeight(getThisPanelClassList(ev), panelHeights), targetAccordionContent, 'panel-is-open' );
+                containerClass( accordion, 'accordion-open');
             });
+        }
+
+
+        function containerClass(container, classname) {
+            if ( container.classList.contains(classname) ) {
+                container.classList.remove(classname);
+            } else {
+                container.classList.add(classname);
+            }
         }
 
 
@@ -40,26 +60,14 @@
          * @return {Boolean}           [description]
          */
         function openTargetPanel(target, height, targetContent, classname) {
+            resetPanels();
+
             if ( !target.classList.contains(classname) ) {
                 setHeight(targetContent, height);
                 setTargetAccordionClass(target, classname);
             } else {
                 resetHeight(targetContent);
-                removeTargetAccordionClass(target, classname);
-            }
-        }
-
-
-        function setTargetAccordionClass(el, classname) {
-            if ( (Object.prototype.toString.call( classname.trim() ) === '[object String]') && !el.classList.contains(classname)  ) {
-                el.classList.add(classname);
-            }
-        }
-
-
-        function removeTargetAccordionClass(el, classname) {
-            if ( (Object.prototype.toString.call( classname.trim() ) === '[object String]') && el.classList.contains(classname) ) {
-                el.classList.remove(classname);
+                removeTargetAccordionClass(targetContent, classname);
             }
         }
 
@@ -70,15 +78,54 @@
             }
         }
 
+        function setTargetAccordionClass(el, classname) {
+            if ( (Object.prototype.toString.call( classname.trim() ) === '[object String]') && !el.classList.contains(classname)  ) {
+                el.classList.add(classname);
+            }
+        }
+
+
+        //TODO: reset all panels before opening another
+        function resetPanels() {
+            let openPanels = document.querySelectorAll('.panel-is-open');
+
+            if ( openPanels.length ) {
+                [].forEach.call(openPanels,function(e){
+                    console.log(e);
+                });
+            }
+        }
+
 
         function resetHeight(el, classname) {
             el.style.cssText = 'max-height: 0; height: 0;';
         }
 
 
-        //TODO: to reset all panels. to be used in lieu with openTargetPanel to ensure only one panel is open at a time
-        function resetAll() {
+        function removeTargetAccordionClass(targetContent, classname) {
 
+            if ( (Object.prototype.toString.call( classname.trim() ) === '[object String]') && targetContent.nodeType === 1) {
+                targetContent.addEventListener( _applyTransitionEndPrefix(targetContent), function callback(ev){
+
+                    if ( ev.propertyName === 'height' || ev.propertyName === 'maxHeight' && targetContent.parentNode.classList.contains(classname) ) {
+                        targetContent.parentNode.classList.remove(classname);
+                        targetContent.removeEventListener( _applyTransitionEndPrefix(targetContent), callback, false );
+                    }
+                });
+            }
+        }
+
+
+        function _applyTransitionEndPrefix( element ) {
+
+            let transition;
+
+            //TODO: possibly a better method to do this
+            for (transition in transitionEndPrefixes) {
+              if ( element.style[transition] !== undefined ) {
+                return transitionEndPrefixes[transition];
+              }
+            }
         }
 
 
@@ -119,7 +166,7 @@
 
 
         /** getHeight
-         *  Get heights of all panels and store in heightsList config array
+         *  Get heights of all panels and store in heightsList config object
          *  @param  {[object]} el        : panel elements
          *  @param  {[string]} panelKey  : string for identification of panels which is to be used as object key in heightsList config
          *  @return {[object]}           : returns array with panel key and value objects
@@ -142,7 +189,6 @@
 
             return height;
         }
-
 
         /**
          * determine if node element is visible

@@ -2,10 +2,24 @@
 
 .accordion-container
     center(800px)
-    // border thin solid #248a4b
+
     &.accordion-open
         .accordion
             opacity 0.5
+
+            &:hover
+                opacity 0.75
+                transform scale(1.015)
+
+            &.panel-is-open
+                opacity 1
+                transform scale(1)
+
+                .accordion-panel-content
+                    transition-delay 200ms
+                    opacity 1
+                    visibility visible
+
 
 .accordion
     display block
@@ -13,9 +27,39 @@
     transition opacity 400ms ease-out, transform 400ms ease-out
     opacity 1
 
+    &.panel-is-open
+        .accordion-header
+            a
+                background-color rgba(43, 166, 89, 1)
+                transform scale(1.025)
+
+                &::after
+                    width 100%
+                    max-width 100%
+
+                > .icon
+                    background-color #248a4b
+                    box-shadow 0 0 0 2px #248a4b
+
+                    &::before
+                        transform rotate(180deg)
+                        opacity 1
+
+                    &::after
+                        transform rotate(-180deg)
+                        opacity 1
+
+        .accordion-panel-content
+            position relative
+
+            .content-container
+                opacity 1
+                transform scale(1) translateY(0)
+
     &:hover
         .accordion-header
             box-shadow 1px 2px 6px 0px rgba(0,0,0, .15)
+
 
     .accordion-header
         display block
@@ -32,20 +76,13 @@
             text-align center
             transition background 400ms ease-out
             box-shadow 1px 2px 6px 0px rgba(0,0,0, .15)
-            transition box-shadow 400ms ease-out, transform 400ms ease-out
+            transition box-shadow 400ms ease-out, transform 400ms ease-out, background-color 400ms ease-out
             transform scale(1)
 
-            &::after
-                pseudo()
-                absolute bottom left
-                max-width 0
-                width 0
-                height 3px
-                background #248a4b
-                transition width 400ms ease-out, max-width 400ms ease-out
-
+            //lighten bg colour, cant see boxshadow
             &:hover
-                background-color rgba(43, 166, 89, .55)
+                background-color rgba(43, 166, 89, 1)
+                // background-color rgba(43, 166, 89, .55)
 
                 > .icon
                     box-shadow 0 0 0 1px rgba(255, 255, 255, .75)
@@ -56,26 +93,14 @@
                     &::after
                         opacity .75
 
-            &.panel-is-open
-                background-color rgba(43, 166, 89, 1)
-                transform scale(1.025)
-
-                &::after
-                    width 100%
-                    max-width 100%
-
-                > .icon
-                    background-color #248a4b
-                    box-shadow 0 0 0 2px #248a4b
-                    //box-shadow 0 0 0 1px rgba(255, 255, 255, 1)
-
-                    &::before
-                        transform rotate(180deg)
-                        opacity 1
-
-                    &::after
-                        transform rotate(-180deg)
-                        opacity 1
+            &::after
+                pseudo()
+                absolute bottom left
+                max-width 0
+                width 0
+                height 3px
+                background #248a4b
+                transition width 400ms ease-out, max-width 400ms ease-out
 
         .icon
             display inline-block
@@ -109,7 +134,6 @@
                 transform rotate(90deg)
 
 
-
     .accordion-panel-content
         display block
         position absolute
@@ -118,29 +142,8 @@
         transition padding 400ms ease-out, height 400ms ease-out, max-height 400ms ease-out, opacity 300ms ease-out, visibility 300ms ease-out
         opacity 0
 
-        &.hidden
-            padding-top 0
-            padding-bottom 0
-            max-height 0
-            height 0
-            border-width 0
-            opacity 0
-            visibility hidden
-
-            .content-container
-                opacity 0
-                transform scale(.5) translateY(-25%)
-
-        &.panel-is-open
-            transition-delay 400ms
-            position relative
-            opacity 1
-            visibility visible
-
-            .content-container
-                opacity 1
-                transform scale(1) translateY(0)
-
         .content-container
+            opacity 0
+            transform scale(.5) translateY(-25%)
             padding 10px 50px
             transition transform 500ms ease-out, opacity 400ms ease-out
