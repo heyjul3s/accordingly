@@ -17,7 +17,9 @@
             panels          = document.querySelectorAll('.accordion-panel-content'),
             height          = {};
 
-            //transitionend prefix
+        let panelsReady = true;
+
+        //transitionend prefix
         let transitionEndPrefixes = {
             'WebkitTransition' : 'webkitTransitionEnd',
                'MozTransition' : 'transitionend',
@@ -37,8 +39,8 @@
                     targetAccordionContent = targetAccordion.querySelector('.accordion-panel-content');
 
                 //TODO: curry
-                openTargetPanel( targetAccordion, findPanelHeight(getThisPanelClassList(ev), panelHeights), targetAccordionContent, 'panel-is-open' );
-                containerClass( accordion, 'accordion-open');
+                resetPanels( findOpenedPanel(), targetAccordion, findPanelHeight( getThisPanelClassList(ev), panelHeights), targetAccordionContent, 'panel-is-open' );
+                // openTargetPanel( targetAccordion, findPanelHeight(getThisPanelClassList(ev), panelHeights), targetAccordionContent, 'panel-is-open' );
             });
         }
 
@@ -60,14 +62,13 @@
          * @return {Boolean}           [description]
          */
         function openTargetPanel(target, height, targetContent, classname) {
-            resetPanels();
 
             if ( !target.classList.contains(classname) ) {
                 setHeight(targetContent, height);
                 setTargetAccordionClass(target, classname);
-            } else {
+            } else if ( target.classList.contains(classname) ) {
                 resetHeight(targetContent);
-                removeTargetAccordionClass(targetContent, classname);
+                removeTargetAccordionClass(target, classname);
             }
         }
 
@@ -85,15 +86,65 @@
         }
 
 
-        //TODO: reset all panels before opening another
-        function resetPanels() {
-            let openPanels = document.querySelectorAll('.panel-is-open');
+        // containerClass( accordion, 'accordion-open');
+        //TODO: reset all panels before opening another,
+        function resetPanels(openedPanel, target, height, targetContent, classname) {
+            //openedPanel must be undefined before setting class
 
-            if ( openPanels.length ) {
-                [].forEach.call(openPanels,function(e){
-                    console.log(e);
-                });
+            let promise = new Promise(function(resolve, reject){
+                if ( openedPanel === undefined ) {
+                    openTargetPanel( target, height, targetContent, classname );
+                    resolve(openedPanel);
+                } else {
+                    //if there is an opened panel, remove and reset
+
+                    resetHeight(openedPanel);
+                    removeTargetAccordionClass(openedPanel, classname);
+
+                    reject(openedPanel);
+                }
+            });
+
+            promise.then(function(){
+                console.log('opened');
+                // openTargetPanel( target, height, targetContent, classname );
+                // containerClass( accordion, 'accordion-open');
+            }).catch(function(){
+                openTargetPanel( target, height, targetContent, classname );
+                // containerClass( accordion, 'accordion-open');
+            });
+        }
+
+
+        function findOpenedPanel() {
+            let panelsArray = Array.from(panels),
+                openedPanel = panelsArray.find(function(){ return document.querySelector('.panel-is-open'); });
+
+            if ( openedPanel !== undefined ) {
+                return openedPanel;
             }
+        }
+
+
+        /**
+         * get the parent element's children
+         * @param  {[type]} element : target element
+         * @return {[type]} array   : array list of child nodes
+         */
+        function _getChildren(element) {
+
+            let i = 0,
+                children = [],
+                childrenNodes = element.childNodes,
+                child;
+
+            for ( i; i < childrenNodes.length; i += 1) {
+                if ( childrenNodes[i].nodeType === 1 ) {
+                    children.push(childrenNodes[i]);
+                }
+            }
+
+            return children;
         }
 
 
@@ -108,6 +159,7 @@
                 targetContent.addEventListener( _applyTransitionEndPrefix(targetContent), function callback(ev){
 
                     if ( ev.propertyName === 'height' || ev.propertyName === 'maxHeight' && targetContent.parentNode.classList.contains(classname) ) {
+                        console.log(targetContent.parentNode);
                         targetContent.parentNode.classList.remove(classname);
                         targetContent.removeEventListener( _applyTransitionEndPrefix(targetContent), callback, false );
                     }
