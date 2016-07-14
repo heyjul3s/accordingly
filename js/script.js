@@ -1,4 +1,3 @@
-// TODO: only one panel open at a time, collapse all before opening
 // TODO: fix target bug
 
 (function(){
@@ -13,11 +12,10 @@
     function Pique() {
 
         let accordion       = document.querySelector('.accordion-container'),
+            accordions      = document.querySelectorAll('.accordion'),
             panelHeader     = document.querySelector('.accordion-header'),
             panels          = document.querySelectorAll('.accordion-panel-content'),
             height          = {};
-
-        let panelsReady = true;
 
         //transitionend prefix
         let transitionEndPrefixes = {
@@ -39,9 +37,22 @@
                     targetAccordionContent = targetAccordion.querySelector('.accordion-panel-content');
 
                 //TODO: curry
-                resetPanels( findOpenedPanel(), targetAccordion, findPanelHeight( getThisPanelClassList(ev), panelHeights), targetAccordionContent, 'panel-is-open' );
-                // openTargetPanel( targetAccordion, findPanelHeight(getThisPanelClassList(ev), panelHeights), targetAccordionContent, 'panel-is-open' );
+                initPanels( findOpenedPanel(), targetAccordion, findPanelHeight( getThisPanelClassList(ev), panelHeights), targetAccordionContent, 'panel-is-open' );
             });
+        }
+
+
+        function setContainerClass(container, classname) {
+            if ( !container.classList.contains(classname) ) {
+                container.classList.add(classname);
+            }
+        }
+
+
+        function removeContainerClass(container, classname) {
+            if ( container.classList.contains(classname) ) {
+                container.classList.remove(classname);
+            }
         }
 
 
@@ -52,7 +63,6 @@
                 container.classList.add(classname);
             }
         }
-
 
         /**
          * application of relevant classes for transitions
@@ -66,10 +76,11 @@
             if ( !target.classList.contains(classname) ) {
                 setHeight(targetContent, height);
                 setTargetAccordionClass(target, classname);
-            } else if ( target.classList.contains(classname) ) {
-                resetHeight(targetContent);
-                removeTargetAccordionClass(target, classname);
             }
+            // else if ( target.classList.contains(classname) ) {
+            //     resetHeight(targetContent);
+            //     removeTargetAccordionClass(target, classname);
+            // }
         }
 
 
@@ -86,43 +97,43 @@
         }
 
 
-        // containerClass( accordion, 'accordion-open');
-        //TODO: reset all panels before opening another,
-        function resetPanels(openedPanel, target, height, targetContent, classname) {
-            //openedPanel must be undefined before setting class
-
-            let promise = new Promise(function(resolve, reject){
-                if ( openedPanel === undefined ) {
-                    openTargetPanel( target, height, targetContent, classname );
-                    resolve(openedPanel);
+        function initPanels(panelsReady, target, height, targetContent, classname) {
+            let promise = new Promise(function(resolve, reject) {
+                //TODO: double check open
+                if ( panelsReady === true ) {
+                    resolve(panelsReady);
                 } else {
-                    //if there is an opened panel, remove and reset
-
-                    resetHeight(openedPanel);
-                    removeTargetAccordionClass(openedPanel, classname);
-
-                    reject(openedPanel);
+                    reject(panelsReady);
                 }
             });
 
             promise.then(function(){
-                console.log('opened');
-                // openTargetPanel( target, height, targetContent, classname );
-                // containerClass( accordion, 'accordion-open');
-            }).catch(function(){
                 openTargetPanel( target, height, targetContent, classname );
-                // containerClass( accordion, 'accordion-open');
+                setContainerClass(accordion, 'accordion-open');
+            }).catch(function(){
+                resetHeight(targetContent);
+                removeTargetAccordionClass(target, classname);
+            }).then(function(){
+                openTargetPanel( target, height, targetContent, classname );
             });
         }
 
 
         function findOpenedPanel() {
-            let panelsArray = Array.from(panels),
-                openedPanel = panelsArray.find(function(){ return document.querySelector('.panel-is-open'); });
+            let accArray = Array.from(accordions);
+            let panelsReady = false;
 
-            if ( openedPanel !== undefined ) {
-                return openedPanel;
+            [].forEach.call(accArray, function(el) {
+                if ( el.classList.contains('panel-is-open') ) {
+                    el.classList.remove('panel-is-open');
+                }
+            });
+
+            if ( document.querySelectorAll('.panel-is-open').length === 0 ) {
+                panelsReady = !panelsReady;
             }
+
+            return panelsReady;
         }
 
 
@@ -154,12 +165,10 @@
 
 
         function removeTargetAccordionClass(targetContent, classname) {
-
             if ( (Object.prototype.toString.call( classname.trim() ) === '[object String]') && targetContent.nodeType === 1) {
                 targetContent.addEventListener( _applyTransitionEndPrefix(targetContent), function callback(ev){
 
                     if ( ev.propertyName === 'height' || ev.propertyName === 'maxHeight' && targetContent.parentNode.classList.contains(classname) ) {
-                        console.log(targetContent.parentNode);
                         targetContent.parentNode.classList.remove(classname);
                         targetContent.removeEventListener( _applyTransitionEndPrefix(targetContent), callback, false );
                     }
