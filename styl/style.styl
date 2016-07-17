@@ -2,6 +2,8 @@
 
 .accordion-container
     center(800px)
+    padding-left 20px
+    padding-right 20px
 
     &.accordion-open
         .accordion
@@ -15,11 +17,6 @@
                 opacity 1
                 transform scale(1)
 
-                .accordion-panel-content
-                    transition-delay 200ms
-                    opacity 1
-                    visibility visible
-
 
 .accordion
     display block
@@ -28,6 +25,10 @@
     opacity 1
 
     &.panel-is-open
+        opacity 1
+        transform scale(1)
+        z-index 3
+
         .accordion-header
             a
                 background-color rgba(43, 166, 89, 1)
@@ -51,9 +52,10 @@
 
         .accordion-panel-content
             position relative
+            opacity 1
+            visibility visible
 
             .content-container
-                opacity 1
                 transform scale(1) translateY(0)
 
     &:hover
@@ -63,7 +65,9 @@
 
     .accordion-header
         display block
+        position relative
         padding 0
+        z-index 3
 
         a
             display block
@@ -78,6 +82,7 @@
             box-shadow 1px 2px 6px 0px rgba(0,0,0, .15)
             transition box-shadow 400ms ease-out, transform 400ms ease-out, background-color 400ms ease-out
             transform scale(1)
+
 
             //lighten bg colour, cant see boxshadow
             &:hover
@@ -137,13 +142,20 @@
     .accordion-panel-content
         display block
         position absolute
+        top 0
         width 100%
         height auto
-        transition padding 400ms ease-out, height 400ms ease-out, max-height 400ms ease-out, opacity 300ms ease-out, visibility 300ms ease-out
+        background-color #38cc70
+        transition padding 400ms ease-out, height 400ms ease-out, max-height 400ms ease-out, opacity 300ms ease-out, visibility 200ms ease-out
+        visibility hidden
         opacity 0
 
-        .content-container
+        &.hide
             opacity 0
-            transform scale(.5) translateY(-25%)
+            visibility hidden
+
+        .content-container
+            // transform scale(.5) translateY(-25%)
+            transform scale(1) translateY(-25%)
             padding 10px 50px
-            transition transform 500ms ease-out, opacity 400ms ease-out
+            transition transform 500ms ease-out
