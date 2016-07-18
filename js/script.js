@@ -1,4 +1,3 @@
-//TODO: fix hide class bug
 (function(){
     'use strict';
 
@@ -55,6 +54,13 @@
 
 
         //TODO: break down func
+        /**
+         * Previous and current accordion handler
+         * @param  {[element]} targetAccordion   : accordion element
+         * @param  {[element]} targetContent     : accordion panel content element
+         * @param  {[string]} classname          : string of 'panel-is-open' expected
+         * @return {[boolean]} panelsReady       : returns boolean to be used in promise
+         */
         function closeAnyOpenedPanels( targetAccordion, targetContent, classname) {
 
             let panelsReady = false;
@@ -142,6 +148,7 @@
 
             if ( !targetAccordion.classList.contains(classname) ) {
                 setHeight(targetContent, height);
+                targetContent.classList.remove('hide');
                 setTargetAccordionClass(targetAccordion, classname);
                 setContainerClass(accordion, 'accordion-open');
             } else if ( targetAccordion.classList.contains(classname) ) {
@@ -154,6 +161,7 @@
 
             if ( target.classList.contains(classname) ) {
                 resetHeight(targetContent);
+                targetContent.classList.add('hide');
                 removeTargetAccordionClass(target, classname);
                 removeContainerClass(accordion, 'accordion-open');
             }
@@ -179,6 +187,21 @@
         }
 
 
+        //TODO: refactor
+        function removeTargetAccordionClass(targetContent, classname) {
+
+            if ( (Object.prototype.toString.call( classname.trim() ) === '[object String]') && targetContent.nodeType === 1) {
+
+                targetContent.addEventListener( applyTransitionEndPrefix(targetContent), function callback(ev){
+                    if ( ev.propertyName === 'height' && targetContent.classList.contains(classname) ) {
+                        targetContent.classList.remove(classname);
+                        targetContent.removeEventListener( applyTransitionEndPrefix(targetContent), callback, false );
+                    }
+                });
+            }
+        }
+
+
         function setContainerClass(container, classname) {
             if ( !container.classList.contains(classname) ) {
                 container.classList.add(classname);
@@ -193,26 +216,10 @@
         }
 
 
-        //TODO: refactor
-        function removeTargetAccordionClass(targetContent, classname) {
-
-            if ( (Object.prototype.toString.call( classname.trim() ) === '[object String]') && targetContent.nodeType === 1) {
-
-                targetContent.addEventListener( applyTransitionEndPrefix(targetContent), function callback(ev){
-                    if ( ev.propertyName === 'height' || ev.propertyName === 'maxHeight' && targetContent.classList.contains(classname) ) {
-                        targetContent.classList.remove(classname);
-                        targetContent.removeEventListener( applyTransitionEndPrefix(targetContent), callback, false );
-                    }
-                });
-            }
-        }
-
-
         function applyTransitionEndPrefix( element ) {
 
             let transition;
 
-            //TODO: possibly a better method to do this
             for (transition in transitionEndPrefixes) {
                 if ( element.style[transition] !== undefined ) {
                     return transitionEndPrefixes[transition];
