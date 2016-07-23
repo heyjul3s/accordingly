@@ -7,9 +7,12 @@ html(lang='EN-AU')
         meta( name='description' content='Javascript accordion that opens one at a time' )
         meta( name='author' content='Julian Low' )
         meta( name='viewport' content='width=device-width, initial-scale=1' )
-        title Pique
+        title Accordingly
+        link(rel='shortcut icon' href="favicon.ico" type='image/x-icon')
+        link(rel='icon' href='favicon.ico' type='image/x-icon')
+        link( href='http://fonts.googleapis.com/css?family=Titillium+Web:300,400,700,900' rel='stylesheet' type='text/css' )
         link( rel='stylesheet' href='dist/style.css' )
-        link( href='https://fonts.googleapis.com/css?family=Arimo:400,700' rel='stylesheet' type='text/css' )
+        link(rel='stylesheet' href='dist/icons.css')
 
     body
         .container
@@ -17,7 +20,7 @@ html(lang='EN-AU')
             
                 .intro
                     h1 Accordingly
-                    p an accordion that opens one at a time with transitionend.
+                    p an accordion that opens one at a time with javascript transitionend.
             
                 .accordion-container
                 
@@ -96,5 +99,16 @@ html(lang='EN-AU')
                                     | sed semper diam maximus quis. Aliquam augue leo, facilisis non orci at, convallis congue 
                                     | leo. Phasellus aliquet diam vitae dui cursus, eget bibendum orci tincidunt. Maecenas 
                                     | non porttitor erat. Donec ultricies ex fermentum odio pulvinar dapibus.
+                                    
+            footer.site-footer
+                a(href='http://heyjul.es')
+                    span.icon-arrow-left
+                    | back to home
+
+                span.slash /
+
+                a(href='http://github.com/heyjul3s/accordingly')
+                    | view on github
+                    span.icon-arrow-right
                                     
         script(src='dist/scripts.js')

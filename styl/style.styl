@@ -1,9 +1,12 @@
 @import 'base/all.styl'
 
+header
+    display block
+    text-align center
+
 .accordion-container
     center(800px)
-    padding-left 20px
-    padding-right 20px
+    padding 45px 20px
 
     &.accordion-open
         .accordion
@@ -77,6 +80,7 @@
             font-size 14px
             font-weight 900
             background-color #38cc70
+            letter-spacing 1px
             text-align center
             transition background 400ms ease-out
             box-shadow 1px 2px 6px 0px rgba(0,0,0, .15)
@@ -155,7 +159,6 @@
             visibility hidden
 
         .content-container
-            // transform scale(.5) translateY(-25%)
             transform scale(1) translateY(-25%)
             padding 10px 50px
             transition transform 500ms ease-out

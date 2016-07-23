@@ -83,7 +83,6 @@
     gulp.task('stylus', function(){
         return gulp.src( paths.src.stylus )
             .pipe( plumber() )
-            .pipe( sourcemaps.init() )
             .pipe( stylus({
 
             paths: [
@@ -107,7 +106,6 @@
             'include css': true
 
         }))
-            .pipe( sourcemaps.write('.') )
             .pipe( gulp.dest( paths.dest.css) );
     });
 

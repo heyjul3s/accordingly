@@ -1,4 +1,4 @@
-(function(){
+(function(window, document){
     'use strict';
 
     document.addEventListener('DOMContentLoaded', function(){
@@ -306,4 +306,4 @@
         });
     }
 
-}());
+}(window, document));
