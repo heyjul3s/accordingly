@@ -2,12 +2,12 @@
     'use strict';
 
     document.addEventListener('DOMContentLoaded', function(){
-        let pique = Pique();
-        pique.init();
+        let accordingly = Accordingly();
+        accordingly.init();
     });
 
 
-    function Pique() {
+    function Accordingly() {
 
         const accordion       = document.querySelector('.accordion-container'),
               panelHeader     = document.querySelector('.accordion-header'),
@@ -40,7 +40,7 @@
                     targetAccordionContent = targetAccordion.querySelector('.accordion-panel-content');
 
 
-                //make sure "this" means this
+                //TODO: make sure "this" means this
                 if ( target !== this && target.tagName === 'A' ) {
 
                     let resetPanels       = closeAnyOpenedPanels.bind( null, targetAccordion, accordion, 'panel-is-open'),
@@ -121,19 +121,14 @@
         function initPanels(panelsReady, target, height, targetContent, classname) {
 
             let promise = new Promise(function(resolve, reject) {
-                if ( panelsReady === true ) {
-                    resolve(panelsReady);
-                } else {
-                    reject(panelsReady);
-                }
+                ( panelsReady === true ) ?  resolve(panelsReady) : reject(panelsReady);
             });
 
-            //arrow
-            promise.then(function(){
-                openTargetPanel( target, height, targetContent, classname );
-            }).catch(function(){
-                closeTargetPanel( target, targetContent, classname );
-            });
+            promise.then(
+                () => openTargetPanel( target, height, targetContent, classname )
+            ).catch(
+                () => closeTargetPanel( target, targetContent, classname )
+            );
         }
 
 
@@ -270,12 +265,11 @@
          *  @param  {[string]} panelKey  : string for identification of panels which is to be used as object key in heightsList config
          *  @return {[object]}           : returns array with panel key and value objects
          */
-        //TODO: destructuring assignment
         function getHeight(el, panelKey) {
 
             if ( (el === Object(el)) && (!Array.isArray(el)) ) {
 
-                Object.keys(el).forEach(function (key) {
+                Object.keys(el).forEach(function(key) {
                     if ( elemIsVisible(el[key]) ) {
                         let panel             = el[key],
                             panelBoundingRect = panel.getBoundingClientRect(),
