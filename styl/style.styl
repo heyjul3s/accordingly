@@ -26,6 +26,7 @@ header
     position relative
     transition opacity 400ms ease-out, transform 400ms ease-out
     opacity 1
+    transform scale(1)
 
     &.panel-is-open
         opacity 1
@@ -116,8 +117,8 @@ header
             left 20px
             vertical-align middle
             rounded()
-            width 28px
-            height 28px
+            width 32px
+            height 32px
             box-shadow 0 0 0 1px rgba(255, 255, 255, .4)
             background-color transparent
             transition box-shadow 400ms ease-out, background-color 400ms ease-out
@@ -129,10 +130,11 @@ header
                 top: 50%;
                 left: calc(50% - 7px);
                 width 14px
-                height 1px
+                height 3px
                 background-color white
                 opacity .4
                 transition transform 400ms ease-out, opacity 400ms ease-out
+                border-radius 6px
 
             &::before
                 transform rotate(0deg)
